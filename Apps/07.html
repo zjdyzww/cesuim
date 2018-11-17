@@ -52,6 +52,9 @@
         // imageryProvider: imageryProvider  // 提定图层提供器
     });
 
+    // 显示帧率和刷新率插件
+    viewer.scene.debugShowFramesPerSecond = true;
+
     // 添加导航工具插件
     Cesium.viewerCesiumNavigationMixin(viewer, {
         defaultResetView: Cesium.Cartographic.fromDegrees(121.809, 31.342, 21000) // 默认初始化导航位置
