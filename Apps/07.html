@@ -55,6 +55,9 @@
     // 显示帧率和刷新率插件
     viewer.scene.debugShowFramesPerSecond = true;
 
+    // 去除Cesium图标和版本信息
+    viewer._cesiumWidget._creditContainer.style.display="none";
+
     // 添加导航工具插件
     Cesium.viewerCesiumNavigationMixin(viewer, {
         defaultResetView: Cesium.Cartographic.fromDegrees(121.809, 31.342, 21000) // 默认初始化导航位置
