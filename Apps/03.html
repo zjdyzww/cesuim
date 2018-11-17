@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Hello World!</title>
+    <script src="../Build/Cesium/Cesium.js"></script>
+    <style>
+        @import url(../Build/Cesium/Widgets/widgets.css);
+
+        html, body, #cesiumContainer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .btn {
+            color: red;
+            font-size: 60px;
+            position: absolute;
+            z-index: 1900;
+        }
+    </style>
+</head>
+<body>
+<div id="cesiumContainer"></div>
+<div class="btn">+</div>
+<div class="btn">-</div>
+<script>
+
+    let viewer = new Cesium.Viewer('cesiumContainer');
+
+    viewer.camera.flyTo({
+        destination: Cesium.Cartesian3.fromDegrees(121.809, 31.342, 21000), // 设置位置 类型：Cartesian3 | Rectangle
+        orientation: {
+            heading: Cesium.Math.toRadians(0), // 方向
+            pitch: Cesium.Math.toRadians(-90), // 倾斜角度
+            roll: 0
+        },
+        duration: 3, // 设置飞行持续时间，默认会根据距离来计算
+    });
+
+    // 获取画布对象
+    let canvas = viewer.scene.canvas;
+
+    // 创建handler监听器，传入画布对象
+    let onMapClickListener = new Cesium.ScreenSpaceEventHandler(canvas);
+
+    // 设置事件监听
+    onMapClickListener.setInputAction((event) => {
+
+        // 获取屏幕位置
+        let windowPosition = event.position;
+
+        // 注：通过viewer.scene.pick()只能获取平面上的点，通过getPickRay我们可以获取地形上的任意一点位置。
+        let ray = viewer.camera.getPickRay(windowPosition);
+        let cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+
+        // 如果笛卡尔点未定义，那么返回
+        if (cartesian) {
+            // 如果坐标定义，则添加点
+            viewer.entities.add({
+                name: "point",
+                position: cartesian,
+                point: {
+                    color: Cesium.Color.RED,
+                    pixelSize: 10,
+                    outlineColor: Cesium.Color.BLACK,
+                    outlineWidth: 3,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+                }
+            });
+        }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+
+</script>
+</body>
+</html>
